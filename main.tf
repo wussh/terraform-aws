@@ -38,6 +38,12 @@ resource "aws_instance" "web" {
   }
 }
 
-output "instance_public_ip" {
-  value = aws_instance.web.public_ip
+resource "null_resource" "chmod_private_key" {
+  triggers = {
+    private_key_filename = local_file.private_key.filename
+  }
+
+  provisioner "local-exec" {
+    command = "chmod 400 ${local_file.private_key.filename}"
+  }
 }
