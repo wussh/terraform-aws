@@ -29,11 +29,12 @@ resource "local_file" "private_key" {
 }
 
 resource "aws_instance" "web" {
-  count         = 3
+  count         = 1
   ami           = "ami-0fa377108253bf620"
   instance_type = "t2.micro"
   key_name      = aws_key_pair.key_pair.key_name
-
+  vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
+  
   tags = {
     Name = "${var.ec2_name}-${count.index + 1}"
   }

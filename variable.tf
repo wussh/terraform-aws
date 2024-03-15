@@ -17,3 +17,8 @@ variable "key_name" {
   description = "AWS Key Name"
   type = string
 }
+
+variable "vpc_id" {
+  description = "AWS VPC ID"
+  type=string
+}
