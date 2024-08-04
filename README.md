@@ -83,3 +83,44 @@ To use Terraform with your AWS account, you'll need to create an IAM user and ge
 11. Once the user is created, you'll see a success message along with the user's access key ID and secret access key. Make sure to copy these keys and keep them secure, as they will be needed to authenticate Terraform with AWS.
 
 12. After creating the user and obtaining the access keys, add them to the `production.tfvars` file as `access_key` and `secret_key` respectively.
+
+
+## Passwordless SSH Access Setup
+
+To set up passwordless SSH access to your EC2 instances, follow these steps:
+
+1. **Ensure your SSH agent is running and has your key added:**
+
+    ```sh
+    eval "$(ssh-agent -s)"
+    ssh-add /home/wush/playground/terraform-aws/kocak.pem
+    ```
+
+2. **Copy your public key to the EC2 instances manually using `scp`:**
+
+    ```sh
+    scp -i /home/wush/playground/terraform-aws/kocak.pem ~/.ssh/id_rsa.pub ubuntu@<EC2_PUBLIC_IP>:~
+    ```
+
+3. **Log in to each EC2 instance using SSH and configure the keys:**
+
+    ```sh
+    ssh -i /home/wush/playground/terraform-aws/kocak.pem ubuntu@<EC2_PUBLIC_IP>
+    ```
+
+    Once logged in, run:
+
+    ```sh
+    mkdir -p ~/.ssh
+    cat ~/id_rsa.pub >> ~/.ssh/authorized_keys
+    rm ~/id_rsa.pub
+    chmod 700 ~/.ssh
+    chmod 600 ~/.ssh/authorized_keys
+    exit
+    ```
+
+4. **Try logging in again without specifying the key:**
+
+    ```sh
+    ssh ubuntu@<EC2_PUBLIC_IP>
+    ```
